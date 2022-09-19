@@ -1,0 +1,16 @@
+Extra Information For Products - Validation report
+-------
+
+Addon details
+-------------
+
+Validation date: 2022-09-19
+Addon type: Module
+Technical name: sleedproductextrainfo
+Display name: Extra Information For Products
+Author: Sleed
+Version: 1.0.0
+Category (tab): front_office_features
+Description: Add additional information to your products
+
+
