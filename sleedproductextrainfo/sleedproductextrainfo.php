@@ -31,9 +31,8 @@ if (!defined('_PS_VERSION_')) {
 
 require_once(dirname(__FILE__).'/classes/SleedProductExtraInfoModel.php');
 
-class SleedProductExtraInfo extends Module 
+class SleedProductExtraInfo extends Module
 {
-    
     public function __construct()
     {
         $this->name = 'sleedproductextrainfo';
@@ -74,7 +73,7 @@ class SleedProductExtraInfo extends Module
             `content` VARCHAR(100) NOT NULL,
             PRIMARY KEY (`id_product_extra_info`)
         ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
-        
+
         foreach ($sql as $query) {
             if (Db::getInstance()->execute($query) == false) {
                 return false;
@@ -107,7 +106,6 @@ class SleedProductExtraInfo extends Module
     public function hookDisplayAdminProductsExtra($params)
     {
         if (Tools::isSubmit('submitUpdateInfo')) {
-
             $extraInfoId = Tools::getValue('submitUpdateInfo');
             $title = Tools::getValue("title_extra_info_{$extraInfoId}");
             $content = Tools::getValue("content_extra_info_{$extraInfoId}");
@@ -117,21 +115,18 @@ class SleedProductExtraInfo extends Module
             } else {
                 $this->context->controller->errors[] = "Title & Content fields are required";
             }
-            
         }
 
         if (Tools::isSubmit('submitDeleteInfo')) {
-
             $extraInfoId = Tools::getValue('submitDeleteInfo');
 
             $this->deleteProductInfo($extraInfoId);
-
         }
 
         return $this->displayProductExtraInfo($params);
     }
 
-    public function displayProductExtraInfo($params) 
+    public function displayProductExtraInfo($params)
     {
         $id_product = !empty($params['id_product']) ? $params['id_product'] : Tools::getValue('id_product');
 
@@ -148,13 +143,17 @@ class SleedProductExtraInfo extends Module
     public function getProductExtraInfo($id_product)
     {
         $productId = pSQL(Tools::getValue('id_product'));
-        
+
         return SleedProductExtraInfoModel::getExtraInfoByProductId($productId);
     }
 
     public function hookActionProductUpdate($params)
     {
-        if (!Tools::isSubmit('submitted_tabs') || !in_array('sleedproductextrainfo', Tools::getValue('submitted_tabs'))) return;
+        if (!Tools::isSubmit('submitted_tabs') ||
+            !in_array('sleedproductextrainfo', Tools::getValue('submitted_tabs'))
+        ) {
+            return;
+        }
 
         $title = Tools::getValue("title");
         $content = Tools::getValue("content");
@@ -168,7 +167,7 @@ class SleedProductExtraInfo extends Module
 
     public function addProductInfo($id_product, $title, $content)
     {
-        $extraInfoModel = new SleedProductExtraInfoModel;
+        $extraInfoModel = new SleedProductExtraInfoModel();
         $extraInfoModel->id_product = $id_product;
         $extraInfoModel->title = $title;
         $extraInfoModel->content = $content;
@@ -186,7 +185,9 @@ class SleedProductExtraInfo extends Module
     public function deleteProductInfo($extraInfoId)
     {
         $extraInfoModel = new SleedProductExtraInfoModel($extraInfoId);
-        if ($extraInfoModel) $extraInfoModel->delete();
+        if ($extraInfoModel) {
+            $extraInfoModel->delete();
+        }
     }
 
 

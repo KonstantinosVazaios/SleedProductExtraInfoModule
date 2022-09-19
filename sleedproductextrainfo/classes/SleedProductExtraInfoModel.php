@@ -53,7 +53,7 @@ class SleedProductExtraInfoModel extends ObjectModel
 
     public static function getExtraInfoByProductId($productId)
     {
-        $sql = "SELECT * FROM ps_sleedproductextrainfo WHERE id_product = {$productId}";
+        $sql = 'SELECT * FROM `'._DB_PREFIX_.'sleedproductextrainfo` WHERE id_product = '. $productId;
         $results = Db::getInstance()->ExecuteS($sql);
         return $results;
     }
