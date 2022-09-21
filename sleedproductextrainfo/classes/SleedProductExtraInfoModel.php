@@ -34,26 +34,50 @@ class SleedProductExtraInfoModel extends ObjectModel
     public static $definition = array(
         'table' => 'sleedproductextrainfo',
         'primary' => 'id_product_extra_info',
-        'multilang' => false,
+        'multilang' => true,
         'fields' => array(
             'id_product' => array('type' => self::TYPE_INT, 'validate' => 'isInt', 'required' => true),
             'title' => array(
-                'type' => self::TYPE_STRING,
-                'lang' => false,
+                'type' => self::TYPE_HTML,
+                'lang' => true,
                 'validate' => 'isString',
                 'required' => true
             ),
-            'content' => array('type' => self::TYPE_STRING,
-                'lang' => false,
+            'content' => array('type' => self::TYPE_HTML,
+                'lang' => true,
                 'validate' => 'isString',
                 'required' => true
             )
         )
     );
 
-    public static function getExtraInfoByProductId($productId)
+    public static function getExtraInfoIds($productId)
     {
-        $sql = 'SELECT * FROM `'._DB_PREFIX_.'sleedproductextrainfo` WHERE id_product = '. $productId;
+        $sql = 'SELECT id_product_extra_info FROM `'._DB_PREFIX_.'sleedproductextrainfo` extra_info_table
+        WHERE extra_info_table.id_product = '.(int)$productId;
+
+        $results = Db::getInstance()->ExecuteS($sql);
+        return $results;
+    }
+
+    public static function getExtraInfo($productId)
+    {
+        $sql = 'SELECT * FROM `'._DB_PREFIX_.'sleedproductextrainfo` extra_info_table
+        LEFT JOIN `'._DB_PREFIX_.'sleedproductextrainfo_lang` extra_info_lang_table
+        ON (extra_info_lang_table.id_product_extra_info = extra_info_table.id_product_extra_info)
+	    WHERE extra_info_table.id_product = '.(int)$productId;
+
+        $results = Db::getInstance()->ExecuteS($sql);
+        return $results;
+    }
+
+    public static function getExtraInfoByLangId($productId, $id_lang)
+    {
+        $sql = 'SELECT * FROM `'._DB_PREFIX_.'sleedproductextrainfo` extra_info_table
+        RIGHT JOIN `'._DB_PREFIX_.'sleedproductextrainfo_lang` extra_info_lang_table
+        ON (extra_info_lang_table.id_product_extra_info = extra_info_table.id_product_extra_info AND extra_info_lang_table.`id_lang` = '.(int)$id_lang.')
+	    WHERE extra_info_table.id_product = '.(int)$productId;
+
         $results = Db::getInstance()->ExecuteS($sql);
         return $results;
     }

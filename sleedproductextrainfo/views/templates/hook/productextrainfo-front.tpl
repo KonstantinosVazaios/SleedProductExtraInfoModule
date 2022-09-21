@@ -26,7 +26,7 @@
 <section class="page-product-box">
     <h3 class="page-product-heading">Extra Information</h3>
     <table class="table-data-sheet">
-        {foreach from=$extraInfo item=info}
+        {foreach from=$extraInfos item=info}
         <tr class="odd">
             <td>{$info['title']|escape:'htmlall':'UTF-8'}</td>
             <td>{$info['content']|escape:'htmlall':'UTF-8'}</td>

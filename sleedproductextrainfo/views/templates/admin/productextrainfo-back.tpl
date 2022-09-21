@@ -25,37 +25,89 @@
 
 <div class="panel">
     <div class="panel-heading">
-        <i class="icon-sitemap"></i> {l s='Product Extra Information' mod='sleedproductextrainfo'}
+        <i class="icon-sitemap"></i> {l s='Add Product Extra Information' mod='sleedproductextrainfo'}
     </div>
     <div class="form-wrapper">
         <input type="hidden" name="submitted_tabs[]" value="sleedproductextrainfo">
-        <div style="width: 100%" class="form-group col-12">
-            <label for="rowtitle">Infomartion Title</label>
-            <input name="title" id="row-title" type="text" class="form-control">
+        <div class="form-group">
+            <label class="control-label col-lg-3 required" for="title_{$id_lang}">
+                <span class="label-tooltip" data-toggle="tooltip"
+                title="{l s='Maximum 32 characters.'}">
+                {l s='Information Title'}
+                </span>
+            </label>
+            <div class="col-lg-9">
+                {include file="controllers/products/input_text_lang.tpl"
+                    languages=$languages
+                    input_value=""
+                    input_name="title"
+                }
+            </div>
         </div>
-        <div style="width: 100%" class="form-group">
-            <label for="exampleFormControlTextarea1">Information Content</label>
-            <textarea name="content" id="row-content" class="form-control" rows="3"></textarea>
+        <div class="form-group">
+            <label class="control-label col-lg-3 required" for="content_{$id_lang}">
+                <span class="label-tooltip" data-toggle="tooltip"
+                title="{l s='Maximum 32 characters.'}">
+                {l s='Information Content'}
+                </span>
+            </label>
+            <div class="col-lg-9">
+                {include file="controllers/products/input_text_lang.tpl"
+                    languages=$languages
+                    input_value=""
+                    input_name="content"
+                }
+            </div>
         </div>
-        <button type="submit" name="submitAddproductAndStay" id="add-row" class="btn btn-success">ADD</button>
+        <button type="submit" name="submitAddproductAndStay" id="add-row" class="btn btn-success" style="width: 100%">ADD</button>
     </div>
-
-    {foreach from=$extraInfo item=info}
+</div>
+{if $extraInfo}
+<div class="panel">
+    <div class="panel-heading">
+        <i class="icon-sitemap"></i> {l s='Update Product Extra Information' mod='sleedproductextrainfo'}
+    </div>
+{/if}
+    {foreach from=$extraInfo key=extra_info_id item=info}
     <div class="tab-container">
         <hr>
-        <div style="width: 100%" class="form-group col-12">
-                <label for="rowtitle">Information Title</label>
-                <input name="title_extra_info_{$info['id_product_extra_info']|escape:'htmlall':'UTF-8'}" type="text" class="form-control" aria-describedby="emailHelp" value="{$info['title']|escape:'htmlall':'UTF-8'}">
+        <div class="form-group">
+            <label class="control-label col-lg-3 required" for="title_{$extra_info_id}_{$id_lang}">
+                <span class="label-tooltip" data-toggle="tooltip"
+                title="{l s='Maximum 32 characters.'}">
+                {l s='Information Title'}
+                </span>
+            </label>
+            <div class="col-lg-9">
+                {include file="controllers/products/input_text_lang.tpl"
+                    languages=$languages
+                    input_value=$info['title']
+                    input_name="title_{$extra_info_id}"
+                }
+            </div>
         </div>
-        <div style="width: 100%" class="form-group">
-            <label for="exampleFormControlTextarea1">Information Content</label>
-            <textarea name="content_extra_info_{$info['id_product_extra_info']|escape:'htmlall':'UTF-8'}" class="form-control" rows="3">{$info['content']|escape:'htmlall':'UTF-8'}</textarea>
+        <div class="form-group">
+            <label class="control-label col-lg-3 required" for="content_{$extra_info_id}_{$id_lang}">
+                <span class="label-tooltip" data-toggle="tooltip"
+                title="{l s='Maximum 32 characters.'}">
+                {l s='Information Content'}
+                </span>
+            </label>
+            <div class="col-lg-9">
+                {include file="controllers/products/input_text_lang.tpl"
+                    languages=$languages
+                    input_value=$info['content']
+                    input_name="content_{$extra_info_id}"
+                }
+            </div>
+            <button type="submit" value="{$extra_info_id|escape:'htmlall':'UTF-8'}" name="submitDeleteInfo" class="btn btn-danger pull-right">Delete</button>
         </div>
-        <button type="submit" value="{$info['id_product_extra_info']|escape:'htmlall':'UTF-8'}" name="submitUpdateInfo" class="btn btn-info">Update</button>
-        <button type="submit" value="{$info['id_product_extra_info']|escape:'htmlall':'UTF-8'}" name="submitDeleteInfo" class="btn btn-danger">Remove</button>
     </div>
     {/foreach}
+    {if $extraInfo}
+    <button type="submit" name="submitUpdateInfo" class="btn btn-info" style="width:100%; margin-top: 20px">Update</button>
 </div>
+{/if}
 
 
 
