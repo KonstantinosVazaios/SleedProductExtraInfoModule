@@ -1,5 +1,5 @@
 {*
-* 2007-2014 PrestaShop
+* 2007-2022 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2014 PrestaShop SA
+*  @copyright  2007-2022 PrestaShop SA
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
@@ -29,9 +29,9 @@
 		<div class="col-lg-9">
 			<input type="text"
 			id="{$input_name|escape:'html':'UTF-8'}_{$language.id_lang|escape:'html':'UTF-8'}"
-			{if isset($input_class)}class="{$input_class}"{/if}
+			{if isset($input_class)}class="{$input_class|escape:'html':'UTF-8'}"{/if}
 			name="{$input_name|escape:'html':'UTF-8'}_{$language.id_lang|escape:'html':'UTF-8'}"
-			value="{$input_value[$language.id_lang]|htmlentitiesUTF8|default:''}" />
+			value="{$input_value[$language.id_lang|escape:'html':'UTF-8']|htmlentitiesUTF8|default:''}" />
 		</div>
 		<div class="col-lg-2">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
@@ -41,7 +41,7 @@
 			<ul class="dropdown-menu">
 				{foreach from=$languages item=language}
 				<li>
-					<a href="javascript:hideOtherLanguage({$language.id_lang|escape:'html':'UTF-8'});">{$language.name}</a>
+					<a href="javascript:hideOtherLanguage({$language.id_lang|escape:'html':'UTF-8'});">{$language.name|escape:'html':'UTF-8'}</a>
 				</li>
 				{/foreach}
 			</ul>

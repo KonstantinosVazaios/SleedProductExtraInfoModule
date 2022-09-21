@@ -75,7 +75,8 @@ class SleedProductExtraInfoModel extends ObjectModel
     {
         $sql = 'SELECT * FROM `'._DB_PREFIX_.'sleedproductextrainfo` extra_info_table
         RIGHT JOIN `'._DB_PREFIX_.'sleedproductextrainfo_lang` extra_info_lang_table
-        ON (extra_info_lang_table.id_product_extra_info = extra_info_table.id_product_extra_info AND extra_info_lang_table.`id_lang` = '.(int)$id_lang.')
+        ON (extra_info_lang_table.id_product_extra_info = extra_info_table.id_product_extra_info 
+        AND extra_info_lang_table.`id_lang` = '.(int)$id_lang.')
 	    WHERE extra_info_table.id_product = '.(int)$productId;
 
         $results = Db::getInstance()->ExecuteS($sql);
