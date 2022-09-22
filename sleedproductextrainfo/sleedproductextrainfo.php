@@ -364,21 +364,21 @@ class SleedProductExtraInfo extends Module
     public function updateProductInfo()
     {
         $id_product = Tools::getValue('id_product');
-        $extraInfoIds = array_merge(...SleedProductExtraInfoModel::getExtraInfoIds($id_product));
+        $extraInfoIds = SleedProductExtraInfoModel::getExtraInfoIds($id_product);
         $languages = Language::getLanguages(false);
 
         foreach ($extraInfoIds as $info_id) {
-
-            $extraInfoModel = new SleedProductExtraInfoModel($info_id);
+            $id = $info_id['id_product_extra_info'];
+            $extraInfoModel = new SleedProductExtraInfoModel($id);
 
             foreach ($languages as $lang) {
                 $lang_id = $lang['id_lang'];
-                $title = Tools::getValue("title_${info_id}_${lang_id}");
-                $content = Tools::getValue("content_${info_id}_${lang_id}");
+                $title = Tools::getValue("title_${id}_${lang_id}");
+                $content = Tools::getValue("content_${id}_${lang_id}");
 
                 if ($title && $content) {
-                    $extraInfoModel->title[$lang_id] = Tools::getValue("title_${info_id}_${lang_id}");
-                    $extraInfoModel->content[$lang_id] = Tools::getValue("content_${info_id}_${lang_id}");
+                    $extraInfoModel->title[$lang_id] = Tools::getValue("title_${id}_${lang_id}");
+                    $extraInfoModel->content[$lang_id] = Tools::getValue("content_${id}_${lang_id}");
                 }
             }
 
