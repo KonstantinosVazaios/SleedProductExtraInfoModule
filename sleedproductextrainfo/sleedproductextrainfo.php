@@ -57,6 +57,7 @@ class SleedProductExtraInfo extends Module
     {
         return parent::install() &&
             $this->prepareDatabase() &&
+            $this->installConfig() &&
             $this->registerHook('displayAdminProductsExtra') &&
             $this->registerHook('actionProductUpdate') &&
             $this->registerHook('displayFooterProduct');
@@ -89,10 +90,31 @@ class SleedProductExtraInfo extends Module
         return true;
     }
 
+    public function installConfig()
+    {   
+        $languages = Language::getLanguages(false);
+
+		foreach ($languages as $lang) {
+            $id_lang = $lang['id_lang'];
+            $values_per_lang['TITLE'][$id_lang] = ''; 
+        }
+
+        Configuration::updateValue('TITLE', $values_per_lang['TITLE']);
+		
+        return true;
+    }
+
     public function uninstall()
     {
         return parent::uninstall() &&
+            $this->uninstallConfig() &&   
             $this->cleanDatabase();
+    }
+
+    public function uninstallConfig()
+    {
+        Configuration::deleteByName('TITLE');
+        return true;
     }
 
     protected function cleanDatabase()
@@ -109,6 +131,105 @@ class SleedProductExtraInfo extends Module
             }
         }
         return true;
+    }
+
+    public function getContent()
+	{
+		return $this->postProcess().$this->renderForm();
+	}
+
+    public function postProcess()
+	{
+        if (!Tools::isSubmit('submitConfig')) return '';
+        
+        $languages = Language::getLanguages(false);
+        $values_per_lang = array();
+
+        foreach ($languages as $lang)
+        {
+            $values_per_lang['TITLE'][$lang['id_lang']] = Tools::getValue('title_'.$lang['id_lang']);
+        }
+
+        Configuration::updateValue('TITLE', $values_per_lang['TITLE']);
+
+        return $this->displayConfirmation($this->l('The title has been updated!'));
+	}
+
+	public function renderForm()
+	{
+        $language = new Language(Configuration::get('PS_LANG_DEFAULT'));
+
+        $fields_form[0]['form'] = array(
+            'legend' => array(
+                'title' => $this->l('Title Configuration'),
+            ),
+            'input' => array(
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Title'),
+                    'name' => 'title',
+                    'size' => 50,
+                    'required' => true,
+                    'lang' => true
+                )
+            ),
+            'submit' => array(
+                'title' => $this->l('Save'),
+                'class' => 'btn btn-default pull-right'
+            )
+        );
+        
+        $helper = new HelperForm();
+        
+        $helper->module = $this;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+        
+        $helper->default_form_language = $language->id;
+        $helper->allow_employee_form_lang = $language->id;
+        
+        $helper->title = $this->displayName;
+        $helper->show_toolbar = true;     
+        $helper->toolbar_scroll = true;  
+        $helper->submit_action = 'submitConfig';
+        $helper->toolbar_btn = array(
+            'save' => array(
+                'desc' => $this->l('Save'),
+                'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
+                '&token='.Tools::getAdminTokenLite('AdminModules'),
+            )
+        );
+
+        $helper->tpl_vars = array(
+            'uri' => $this->getPathUri().'views/',
+			'fields_value' => $this->getFieldsValues(),
+			'languages' => $this->context->controller->getLanguages(),
+			'id_language' => $this->context->language->id
+		);
+
+        return $helper->generateForm($fields_form);
+	}
+
+    public function getFieldsValues()
+    {
+        $fields = array();
+
+		$languages = Language::getLanguages(false);
+
+		foreach ($languages as $lang)
+		{
+            $id_lang = $lang['id_lang'];
+            $title = Configuration::get('TITLE', $id_lang);
+
+            if ($title) {
+                $fields['title'][$id_lang] = Tools::getValue('title_'.(int)$id_lang, $title);
+            } else {
+                $fields['title'][$id_lang] = Tools::getValue('title_'.$this->default_image_desktop);
+            }
+		}
+
+		return $fields;
     }
 
     public function hookDisplayAdminProductsExtra($params)
@@ -281,10 +402,12 @@ class SleedProductExtraInfo extends Module
         $id_product = !empty($params['id_product']) ? $params['id_product'] : Tools::getValue('id_product');
         $id_language = $this->context->language->id;
 
+        $title = Configuration::get('TITLE', $id_language);
         $extraInfo = SleedProductExtraInfoModel::getExtraInfoByLangId(pSQL($id_product), $id_language);
 
         $this->context->smarty->assign(array(
-            'extraInfo' => $extraInfos
+            'title' => $title,
+            'extraInfo' => $extraInfo
         ));
         return $this->display(__FILE__, 'views/templates/hook/productextrainfo-front.tpl');
     }
