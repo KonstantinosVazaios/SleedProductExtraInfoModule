@@ -156,15 +156,14 @@ class SleedProductExtraInfo extends Module
 
         if ($data) {
             $this->addProductInfo($params['id_product'], $data);
-        } else {
-            $this->context->controller->errors[] = "Title & Content fields are required";
-        }
+        } 
     }
 
     public function handleRequestData()
     {
         $languages = Language::getLanguages(false);
         $values_per_lang = array();
+        $validated = true;
 
         foreach ($languages as $lang)
         {
@@ -174,14 +173,16 @@ class SleedProductExtraInfo extends Module
             if ($title && $content) {
                 $values_per_lang['title'][$lang['id_lang']] = Tools::getValue('title_'.$lang['id_lang']);
                 $values_per_lang['content'][$lang['id_lang']] = Tools::getValue('content_'.$lang['id_lang']);
+            } else {
+                $validated = false;
             }
         }
 
-        if (!$values_per_lang) {
-            $this->context->controller->errors[] = "Title & Content fields are required";
+        if (!$validated) {
+            $this->context->controller->errors[] = "Title & Content fields are required for all languages";
         }
 
-        return $values_per_lang;
+        return $validated ? $values_per_lang : array();
     }
 
     // Grouping buy columns to use with lang input type
